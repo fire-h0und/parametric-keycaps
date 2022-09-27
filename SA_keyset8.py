@@ -57,7 +57,7 @@ log(radius)
 radius2 = 34     #mm top radius
 radius3 = 34 - 8 #mm alternate top radius TODO
 
-
+#ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
 ride   =  5.5 #mm how deep the switch goes
 sw_body= 14   #mm how much the switch requires
 
@@ -131,6 +131,7 @@ def alpsstem(width):
     alps_stem=alps_stem.line( 0.1, 0  )
     alps_stem=alps_stem.line(   0, .375 )
     alps_stem=alps_stem.close()
+    # Alps stem is ideally flush with the keycap bottom
     alps_stem=alps_stem.extrude(ride+2.1)
     alps_stem=alps_stem.union(ribs)
 
@@ -155,6 +156,11 @@ def alpsstab(width):
     return alps_stab
 
 def mxstem(width):
+    #this very MX stem is tested so far to fit:
+    # Kailh ChocV2,
+    # Kailh BOX (square)
+    # Kailh Silent BOX (round stem)
+    # Cherry MX "+" like stem
 
     #shape the ribs in the hole ceiling
     ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2))
@@ -166,11 +172,11 @@ def mxstem(width):
     mx_stem=mx_stem.clean()
     mx_stem=mx_stem.extrude(ride+3.1)
     mx_stem=mx_stem.union(ribs)
-
+    #my stem size fixes for FDM (a smidge too tight)
     mx_stem_hole=cq.Workplane(origin=(0,0,-2))
-    mx_stem_hole=mx_stem_hole.rect(4.15, 1.27)
-    mx_stem_hole=mx_stem_hole.rect(1.12, 4.15)
-    mx_stem_hole=mx_stem_hole.extrude(ride+2)
+    mx_stem_hole=mx_stem_hole.rect(4.15-0.05, 1.27+0.05)
+    mx_stem_hole=mx_stem_hole.rect(1.12+0.05, 4.15-0.05)
+    mx_stem_hole=mx_stem_hole.extrude(ride+2) # +2 mm to just be on the safe side here
     mx_stem=mx_stem.cut(mx_stem_hole)
     return mx_stem
 
@@ -181,7 +187,6 @@ def alps_hole (ride,width):
 
     #add Alps stab stems:
     alps_stab=alpsstab(width)
-    #TODO
 
     #shape the hole in negative
     hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
