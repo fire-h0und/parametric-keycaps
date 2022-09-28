@@ -14,11 +14,11 @@ gap = 0.95
 #stabs on <> are Y centered:
 #11.938mm ?
 #23.8572mm (exactly 0.94" for 2.xxU and 1.5" for 3U according to Cherry spec sheet)
-#Cherry            : 2U                  :<mount> = center     , <stab> 23.86mm apart from center
-#Cherry            : 2.25U               :<mount> = center     , <stab> 23.86mm apart from center
-#Cherry            : 2.75U               :<mount> = center     , <stab> 23.86mm apart from center
-#Cherry            : 3U                  :<mount> = center     , <stab> 38.07mm apart from center
-#Signature Plastics: 6.25U space [118mm] :<mount> = center     , <stab> 50mm apart from center
+#Cherry            : 2U                  :<mount> = center     , <stab> 23.86mm apart
+#Cherry            : 2.25U               :<mount> = center     , <stab> 23.86mm apart
+#Cherry            : 2.75U               :<mount> = center     , <stab> 23.86mm apart
+#Cherry            : 3U                  :<mount> = center     , <stab> 38.07mm apart
+#Signature Plastics: 6.25U space [118mm] :<mount> = center     , <stab> 50mm apart
 #Cherry G80-3000   : 6.25U space [118mm] :<mount> 11.9 to right, <stab> -"- (0.5U, 3.75U 5.75U)
 #                  : 6.25U space [118mm]          -"-          , 40mm    (2.1U from center)
 #                  : 6.25U space [118mm]          -"-          , 42.5mm  (3U from center)
@@ -31,16 +31,21 @@ gap = 0.95
 
 ##########
 #
-# ALPS
+# Alps
 #
 ##########
-#                  : 2U                  :<mount> = center     , <stab> mm apart from center
-#                  : 2.25U               :<mount> = center     , <stab> mm apart from center
-#                  : 2.75U               :<mount> = center     , <stab> mm apart from center
-#                  : 3U                  :<mount> = center     , <stab> mm apart from center
-#Kudos to PigeonsLB o/
-#Big Foot          : 7U          [133mm] :<mount> = center     , <stabs> (93,75+(A+B)/4 mm apart)
+#                  : 2U         [37.2mm] :<mount> = center     , <stab> 27 mm apart
+#                  : 2.25U      [42.0mm] :<mount> = center     , <stab> 27 mm apart
+#                  : 2.75U      [51.6mm] :<mount> = center     , <stab> 41 mm apart
+#                  : 3U                  :<mount> = center     , <stab> ?? mm apart
+#Signature Plastics: 6.25U space [118mm] :<mount> = center     , <MXstab> 50mm apart
+#Big Foot          : 7U          [133mm] :<mount> = center     , <stabs> 98 mm apart,
+#                                         another switch stem mount 35mm to the right and another
+#                                                               special sleeve stabilizer 
+#                                                               4.0-3.8mm dia 35mm to the left
+#                                                               protruding 6.0 mm thru the cap bottom plane
 #TaiHAo            : 7U          [133mm] :<mount> = center     , <stab> 49mm + 55m MX stab
+#                  : 7U space    [133mm] :<mount> = center     , <MXstab> 57.15mm apart (3U)
 #TODO Enter keys
 
 
@@ -83,53 +88,76 @@ cave = size-2*wall # "cave" is the stem hole depth
 if cave < sw_body: # fitting the upper switch body
     cave = sw_body
 #Alps stabilizer size and position (looking from top down)
-stab_width = 3.0   #mm
-stab_length= 2.0   #mm
-stab_wall  = 0.8   #mm
+# the measured value is (2.975) 3.325 x 2.055 mm on the brown (nylon?) 
+# Alps stabilizer insert, it most probably had some 0.15 mm 
+# high rib on the 3 mm sized faces for an assured interference fit.
+stab_width = 3.20   #mm 
+stab_length= 2.10   #mm
+stab_wall  = 1.0   #mm
+# the stabilizer offset on the Matias set could likely benefit from 
+# increasing this value for some 0.2 to 0.3 mm (-2.3mm) but it
+# remains to be tested and comfirmed
 stab_offset= -2.0  #mm
 
-def alpsstem(width):
+# stem is measured as 4.5 x 2.2 mm fron an OEM Alps cap
+# the  intended dimension is however offset for tight fit:
+# 4.55 mm x 2.25 mm
+alps_stem_width = 4.50 #mm best intentionally left free of overlap
+alps_stem_length= 2.25 #mm 
+stem_rib   = 0.1 #mm the half offset on the two opposing sides
+stem_width = alps_stem_width - stem_rib*2
+stem_length= alps_stem_length - stem_rib*2
+stem_rib_w1= 0.5 #mm the double rib on the longer side
+stem_rib_w2= 0.8 #mm the single rib on the narrow side
+stem_rib_sp= 2.5 #mm how wide to putr the ribs apart
+
+def alps_stem(width):
 
     #shape the ribs in the hole ceiling
     ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2))
     ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
     ribs = ribs.box(cave,ribsW,ribsZ)
 
-    #shape the stem in positive form
-    alps_stem=cq.Workplane(origin=(-1.0,2.15,0))
-    alps_stem=alps_stem.line(0.625, 0  )
-    alps_stem=alps_stem.line(0  , 0.1)
-    alps_stem=alps_stem.line(0.8, 0  )
-    alps_stem=alps_stem.line(0  ,-0.1)
-    alps_stem=alps_stem.line(0.625, 0  )
-    alps_stem=alps_stem.line(0  ,-0.1)
-    #shorter side:
-    alps_stem=alps_stem.line(   0,-.375 )
-    alps_stem=alps_stem.line( 0.1, 0  )
-    alps_stem=alps_stem.line(   0,-.5 )
-    alps_stem=alps_stem.line(-0.1, 0  )
-    alps_stem=alps_stem.line(   0,-2.5)
-    alps_stem=alps_stem.line( 0.1, 0  )
-    alps_stem=alps_stem.line(   0,-.5 )
-    alps_stem=alps_stem.line(-0.1, 0  )
-    alps_stem=alps_stem.line(   0,-.375 )
-    #and a corner
-    alps_stem=alps_stem.line(-0.625, 0  )
-    alps_stem=alps_stem.line(0  ,-0.1)
-    alps_stem=alps_stem.line(-0.8, 0  )
-    alps_stem=alps_stem.line(0  , 0.1)
-    alps_stem=alps_stem.line(-0.625, 0  )
-    alps_stem=alps_stem.line(0  , 0.1)
-    #and another :D
-    alps_stem=alps_stem.line(   0, .375 )
-    alps_stem=alps_stem.line(-0.1, 0  )
-    alps_stem=alps_stem.line(   0, .5 )
-    alps_stem=alps_stem.line( 0.1, 0  )
-    alps_stem=alps_stem.line(   0, 2.5)
-    alps_stem=alps_stem.line(-0.1, 0  )
-    alps_stem=alps_stem.line(   0, .5 )
-    alps_stem=alps_stem.line( 0.1, 0  )
-    alps_stem=alps_stem.line(   0, .375 )
+    #shape the stem in positive form 
+    
+    #move away along the longer side for a start
+    alps_stem=cq.Workplane(origin=(-1.0,stem_width/2,0))
+    #we start drawing the narrow side from the corner:
+    alps_stem=alps_stem.line((stem_length-stem_rib_w2)/2, 0  )
+    #the ribs are ADDED to the stem size:
+    alps_stem=alps_stem.line(0  , stem_rib)
+    alps_stem=alps_stem.line(stem_rib_w2, 0  )
+    alps_stem=alps_stem.line(0  ,-stem_rib)
+    alps_stem=alps_stem.line((stem_length-stem_rib_w2)/2, 0  )
+    alps_stem=alps_stem.line(0  ,-stem_rib)
+    #wider side next:
+    alps_stem=alps_stem.line(   0,-(stem_width-stem_rib_sp-stem_rib_w1*2)/2 ) 
+    alps_stem=alps_stem.line( stem_rib, 0  )
+    alps_stem=alps_stem.line(   0,-stem_rib_w1 )
+    alps_stem=alps_stem.line(-stem_rib, 0  )
+    # we use defined rib spacing and are hardcoed for 2 ribs only
+    alps_stem=alps_stem.line(   0,-stem_rib_sp)
+    alps_stem=alps_stem.line( stem_rib, 0  )
+    alps_stem=alps_stem.line(   0,-stem_rib_w1 )
+    alps_stem=alps_stem.line(-stem_rib, 0  )
+    alps_stem=alps_stem.line(   0,-(stem_width-stem_rib_sp-stem_rib_w1*2)/2 )
+    #and a corner and back to the other narrow side:
+    alps_stem=alps_stem.line(-(stem_length-stem_rib_w2)/2, 0  )
+    alps_stem=alps_stem.line(0  ,-stem_rib)
+    alps_stem=alps_stem.line(-stem_rib_w2, 0  )
+    alps_stem=alps_stem.line(0  , stem_rib)
+    alps_stem=alps_stem.line(-(stem_length-stem_rib_w2)/2, 0  )
+    alps_stem=alps_stem.line(0  , stem_rib)
+    #and another wider side:
+    alps_stem=alps_stem.line(   0, (stem_width-stem_rib_sp-stem_rib_w1*2)/2 )
+    alps_stem=alps_stem.line(-stem_rib, 0  )
+    alps_stem=alps_stem.line(   0, stem_rib_w1 )
+    alps_stem=alps_stem.line( stem_rib, 0  )
+    alps_stem=alps_stem.line(   0, stem_rib_sp)
+    alps_stem=alps_stem.line(-stem_rib, 0  )
+    alps_stem=alps_stem.line(   0, stem_rib_w1 )
+    alps_stem=alps_stem.line( stem_rib, 0  )
+    alps_stem=alps_stem.line(   0, (stem_width-stem_rib_sp-stem_rib_w1*2)/2 )
     alps_stem=alps_stem.close()
     # Alps stem is ideally flush with the keycap bottom
     alps_stem=alps_stem.extrude(ride+2.1)
@@ -137,7 +165,7 @@ def alpsstem(width):
 
     return alps_stem
 
-def alpsstab(width):
+def alps_stab(width):
     #shape the ribs in the hole ceiling
     ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2))
     ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
@@ -155,7 +183,7 @@ def alpsstab(width):
     alps_stab=alps_stab.cut(alps_stab_hole)
     return alps_stab
 
-def mxstem(width):
+def mx_stem(width):
     #this very MX stem is tested so far to fit:
     # Kailh ChocV2,
     # Kailh BOX (square)
@@ -183,44 +211,48 @@ def mxstem(width):
 def alps_hole (ride,width):
 
     #shape the stem in positive form
-    alps_stem=alpsstem(width)
+    alpsstem=alps_stem(width)
 
     #add Alps stab stems:
-    alps_stab=alpsstab(width)
+    alpsstab=alps_stab(width)
+    #TODO
 
     #shape the hole in negative
     hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
     hole = hole.box(cave,cave+(step*(width-1)),ride+r4+2)
     hole = hole.fillet(r4)
-    hole = hole.cut(alps_stem)
+    hole = hole.cut(alpsstem)
 
     #add stabilizers
     spacing = 0
-    if width > 2.75: # space keys:
-        spacing = ( width - 1 ) * 3/4 * 25.38 #mm
-    #elif width > 2.75: # it's 3U:
-    #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
-    elif width > 1.75:
-        spacing=15/16 * 25.38 #mm ( it's 3/4" x 5/4 ( 2.25U - (2 x 1/2U)) exactly )
+    if width == 7 or width == 6.25: # space keys:
+        spacing = 98 #mm
+    elif width == 2.75 or width == 3: # where will you find 3U stabilizer wire anyway?
+        spacing = 41 #mm
+    elif width == 2.25 or width == 2:
+        spacing = 27 #mm
     if spacing != 0:
-        hole=hole.cut(alps_stab.translate([0,spacing/2,0]))
-        hole=hole.cut(alps_stab.translate([0,-spacing/2,0]))
+        hole=hole.cut(alpsstab.translate([0,spacing/2,0]))
+        hole=hole.cut(alpsstab.translate([0,-spacing/2,0]))
+
+    #TODO add the 35mm offset 4mm dia stabilizer axle too
+    #TODO add the 35mm 2nd alps stem to 7U space bar
 
     return hole.rotate((0,0,0),(0,0,1),90)
 
 def alpsmx_hole (ride,width):
 
     #shape the stem in positive form
-    alps_stem=alpsstem(width)
+    alpsstem=alps_stem(width)
 
     #MX stab stems:
-    mx_stem=mxstem(width)
+    mxstem=mx_stem(width)
 
     #shape the hole in negative
     hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
     hole = hole.box(cave,cave+(step*(width-1)),ride+r4+2)
     hole = hole.fillet(r4)
-    hole = hole.cut(alps_stem)
+    hole = hole.cut(alpsstem)
 
     #add stabilizers:
     spacing = 0
@@ -231,22 +263,22 @@ def alpsmx_hole (ride,width):
     elif width > 1.75:
         spacing=15/16 * 25.38 #mm ( it's 3/4" x 5/4 ( 2.25U - (2 x 1/2U)) exactly )
     if spacing != 0:
-        mx_stab=mx_stem.translate([0,spacing/2,0])
-        hole=hole.cut(mx_stab)
-        mx_stab=mx_stem.translate([0,-spacing/2,0])
-        hole=hole.cut(mx_stab)
+        mxstab=mxstem.translate([0,spacing/2,0])
+        hole=hole.cut(mxstab)
+        mxstab=mxstem.translate([0,-spacing/2,0])
+        hole=hole.cut(mxstab)
     return hole.rotate((0,0,0),(0,0,1),90)
 
 def mx_hole (ride,width):
 
     #shape the stem in positive form
-    mx_stem=mxstem(width)
+    mxstem=mx_stem(width)
 
     #shape the hole in negative
     hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
     hole = hole.box(cave,cave+(step*(width-1)),ride+r4+2)
     hole = hole.fillet(r4)
-    hole = hole.cut(mx_stem)
+    hole = hole.cut(mxstem)
 
     #add stabilizers:
     spacing = 0
@@ -257,9 +289,9 @@ def mx_hole (ride,width):
     elif width > 1.75:
         spacing=15/16 * 25.38 #mm ( it's 3/4" x 5/4 ( 2.25U - (2 x 1/2U)) exactly )
     if spacing != 0:
-        mx_stab=mx_stem.translate([0,spacing/2,0])
+        mxstab=mxstem.translate([0,spacing/2,0])
         hole=hole.cut(mx_stab)
-        mx_stab=mx_stem.translate([0,-spacing/2,0])
+        mxstab=mxstem.translate([0,-spacing/2,0])
         hole=hole.cut(mx_stab)
     return hole.rotate((0,0,0),(0,0,1),90)
 
@@ -430,7 +462,7 @@ for x in range(len(keybrd)):
     log(b)
     b=0
     for y in range(len(keybrd[x])):
-        t="AlpsMX"
+        t="Alps"
         s=keybrd[x][y][0]
         w=keybrd[x][y][1]
         b=b+w/2
