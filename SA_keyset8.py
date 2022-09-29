@@ -91,13 +91,14 @@ if cave < sw_body: # fitting the upper switch body
 # the measured value is (2.975) 3.325 x 2.055 mm on the brown (nylon?) 
 # Alps stabilizer insert, it most probably had some 0.15 mm 
 # high rib on the 3 mm sized faces for an assured interference fit.
-stab_width = 3.20   #mm 
-stab_length= 2.10   #mm
-stab_wall  = 1.0   #mm
+stab_width  = 3.20   #mm 
+stab_length = 2.10   #mm
+stab_wall   = 1.0   #mm
 # the stabilizer offset on the Matias set could likely benefit from 
 # increasing this value for some 0.2 to 0.3 mm (-2.3mm) but it
 # remains to be tested and comfirmed
-stab_offset= -2.0  #mm
+stab_offset = -2.0  #mm
+stab_retract= -1.2  #mm
 
 # stem is measured as 4.5 x 2.2 mm fron an OEM Alps cap
 # the  intended dimension is however offset for tight fit:
@@ -171,10 +172,10 @@ def alps_stab(width):
     ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
     ribs = ribs.box(cave,ribsW,ribsZ)
 
-    alps_stab=cq.Workplane(origin=(stab_offset,0,-1))
+    alps_stab=cq.Workplane(origin=(stab_offset,0,stab_retract+ribsZ))
     alps_stab=alps_stab.rect(stab_width+2*stab_wall,stab_length+2*stab_wall)
     alps_stab=alps_stab.clean()
-    alps_stab=alps_stab.extrude(ride+3.1)
+    alps_stab=alps_stab.extrude(ride+ribsZ)
     alps_stab=alps_stab.union(ribs)
 
     alps_stab_hole=cq.Workplane(origin=(stab_offset,0,-2))
@@ -406,7 +407,7 @@ def spherical_cap (stem,row,width):
     return form
 selection='( <Z or |X or |Y )'
 
-result = spherical_cap ("AlpsMX",5,2.25)
+result = spherical_cap ("Alps",5,2.25)
 #result = mx_hole (5,1.25)
 #highlight = result.edges(selection)
 
@@ -444,7 +445,7 @@ keybrd = [
     ]
 '''
 
-
+'''
 #ANSI 60%
 keybrd = [
   [[1,1],[1,1],[0,.75],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,2],[1,0],[0,.75],[1,1],[1,1.5],[1,1.5]],
@@ -469,7 +470,7 @@ for x in range(len(keybrd)):
         result = spherical_cap(t,s,w).translate([-b*19.05,a*19.05,0])
         b=b+w/2
         show_object(result,options={cq.Color("blue")})
-
+'''
 
 '''
 exporters.export(
