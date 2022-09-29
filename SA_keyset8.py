@@ -291,9 +291,9 @@ def mx_hole (ride,width):
         spacing=15/16 * 25.38 #mm ( it's 3/4" x 5/4 ( 2.25U - (2 x 1/2U)) exactly )
     if spacing != 0:
         mxstab=mxstem.translate([0,spacing/2,0])
-        hole=hole.cut(mx_stab)
+        hole=hole.cut(mxstab)
         mxstab=mxstem.translate([0,-spacing/2,0])
-        hole=hole.cut(mx_stab)
+        hole=hole.cut(mxstab)
     return hole.rotate((0,0,0),(0,0,1),90)
 
 def spherical_cap (stem,row,width):
@@ -407,7 +407,7 @@ def spherical_cap (stem,row,width):
     return form
 selection='( <Z or |X or |Y )'
 
-result = spherical_cap ("Alps",5,2.25)
+result = spherical_cap ("MX",5,2.25)
 #result = mx_hole (5,1.25)
 #highlight = result.edges(selection)
 
