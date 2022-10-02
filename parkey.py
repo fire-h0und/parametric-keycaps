@@ -183,7 +183,7 @@ def alpsstab(dims):
 
     alps_stab_hole=cq.Workplane(origin=(stab_offset,0,-2))
     alps_stab_hole=alps_stab_hole.rect(stab_width,stab_length)
-    alps_stab_hole=alps_stab_hole.extrude(ride+ribsZ/2+r4)
+    alps_stab_hole=alps_stab_hole.extrude(ride+ribsZ/2+r4+2)
     alps_stab=alps_stab.cut(alps_stab_hole)
     return alps_stab
 
