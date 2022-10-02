@@ -178,12 +178,12 @@ def alpsstab(dims):
     alps_stab=cq.Workplane(origin=(stab_offset,0,stab_retract+ribsZ/2+r4))
     alps_stab=alps_stab.rect(stab_width+2*stab_wall,stab_length+2*stab_wall)
     alps_stab=alps_stab.clean()
-    alps_stab=alps_stab.extrude(ride+ribsZ)
+    alps_stab=alps_stab.extrude(ride+ribsZ+r4)
     alps_stab=alps_stab.union(ribs)
 
     alps_stab_hole=cq.Workplane(origin=(stab_offset,0,-2))
     alps_stab_hole=alps_stab_hole.rect(stab_width,stab_length)
-    alps_stab_hole=alps_stab_hole.extrude(ride+2)
+    alps_stab_hole=alps_stab_hole.extrude(ride+ribsZ/2+r4)
     alps_stab=alps_stab.cut(alps_stab_hole)
     return alps_stab
 
@@ -523,7 +523,7 @@ for x in range(len(keybrd)):
     log(b)
     b=0
     for y in range(len(keybrd[x])):
-        t="MX"
+        t="Alps"
         s=keybrd[x][y][0]
         w=keybrd[x][y][1]
         b=b+w/2
