@@ -1,5 +1,5 @@
 # parametric-keycaps
-Some keyboard key cap shapes made in CQ-editor (Cad Query GUI wrapper)
+Some keyboard key cap shapes made in [CQ-editor](https://github.com/CadQuery/CQ-editor) (Cad Query GUI wrapper)
 
 ![preview](https://github.com/fire-h0und/parametric-keycaps/blob/main/Keyset.png)
 
