@@ -113,7 +113,7 @@ def init(style:str):
         if style == "low":
             height   = 5.9 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
-            roundness= 3.0 # measureless factor: from 0 to height gives sane values, a good default is 8.5
+            roundness= 5.8 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
             radius2  = 64     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 14 #mm alternate top radius TODO (default is 8 or 11 mm)
@@ -133,7 +133,7 @@ def init(style:str):
         elif style == "semilow":
             height   = 8.6 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
-            roundness= 5.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
+            roundness= 6.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
             radius2  = 57     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
@@ -153,9 +153,9 @@ def init(style:str):
         elif style == "medium":
             height   = 10.5 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
-            roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
+            roundness= 5.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 57     #mm top radius (37 or 64 mm)
+            radius2  = 47     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 8 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.15 #mm special case when space radius needs tweaking
             #
@@ -593,7 +593,7 @@ def spherical_cap (stem,row,dims):
 
         #two opposing sides at switch width distance
         sides_L = side1
-        sides_L = sides_L.intersect(base.translate([step/2,0,step*1])) # half side profile
+        sides_L = sides_L.intersect(base.translate([step/2,0,step*1.35])) # half side profile
         sides_L = sides_L.translate([ ((width-1)*step/2) , 0 , 0 ])
         sides_R = sides_L.rotate((0,0,0),(0,0,1),180)
         #sides length wise:
@@ -613,14 +613,16 @@ def spherical_cap (stem,row,dims):
         # fillet sides
         #
         e_selection='not( #Z )'
-        d = form#.edges(e_selection)
+        d = form.edges(e_selection)
+        d = d.fillet(r2)
         form = form.edges(e_selection) # we are pencil (or rocket) shaped
-        #form = form.fillet(r2)
+        form = form.fillet(r2)
 
         #o1 = -1 is space row
         if o1 != -1: # we are digging out a conqave shape:
             stamp_offset=[0,0,0]
             shape = stamp.translate(stamp_offset)
+            stamp = stamp.rotate((0,0,0),(0,0,1),-0.05)
             form = form.cut(stamp)
         else: # we are building a convex shape:
             stamp_offset=[0,0,height*4]
@@ -637,11 +639,12 @@ def spherical_cap (stem,row,dims):
         #
         f_select_top = '%SPHERE or ( %CYLINDER exc (<X or >X or <Y or >Y) )'
         e_select_top = 'not( %CIRCLE )'
-        #d = form.faces(f_select_top).edges(e_select_top)
+        d = form#.faces(f_select_top).edges(e_select_top)
+        #d = d.fillet(r3)
         #d = form.edges(e_select_top)
         form = form.faces(f_select_top).edges(e_select_top)
 
-        #form = form.fillet(r3)
+        form = form.fillet(r3)
         #width
         if width > 0:
             form = form.cut(base)
@@ -663,7 +666,7 @@ def spherical_cap (stem,row,dims):
 #TODO:
 # pick sets of values across variables and make keyset presets
 
-init('low') # default (none) style
+init('medium') # default (none) style
 #
 #"low"
 #
@@ -690,15 +693,58 @@ init('low') # default (none) style
 
 
 #selection='( <Z or |X or |Y )'
+init('semilow')
+result = spherical_cap ("Alps",1,(2.25,1)).translate((0,0,0))
+show_object(result)
+keyname='semilow_Alps_R1_W2.25'
+exporters.export(
+    result,
+    keyname+'_parkey.stl',
+    tolerance=0.15,
+    angularTolerance=0.125
+    )
 
-#result = spherical_cap ("Choc",5,(2.25,1))
+init('medium')
+result = spherical_cap ("Alps",1,(2.25,1)).translate((0,step,0))
+show_object(result)
+keyname='medium_Alps_R1_W2.25'
+exporters.export(
+    result,
+    keyname+'_parkey.stl',
+    tolerance=0.15,
+    angularTolerance=0.125
+    )
+
+init('semihigh')
+result = spherical_cap ("Alps",1,(2.25,1)).translate((0,step*2,0))
+show_object(result)
+keyname='semihigh_Alps_R1_W2.25'
+exporters.export(
+    result,
+    keyname+'_parkey.stl',
+    tolerance=0.15,
+    angularTolerance=0.125
+    )
+
+init('high')
+result = spherical_cap ("Alps",1,(2.25,1)).translate((0,step*3,0))
+show_object(result)
+keyname='high_Alps_R1_W2.25'
+exporters.export(
+    result,
+    keyname+'_parkey.stl',
+    tolerance=0.15,
+    angularTolerance=0.125
+    )
+
+
 #result = mx_hole (5,1.25)
 #highlight = result.edges(selection)
 
 #show_object(result, name="body", options={cq.Color("blue")})
 #debug(highlight)
 
-
+'''
 #show a lot:
 y=0
 x=0
@@ -716,7 +762,7 @@ for s in [(1,2),(1.25,1),(1.5,1.5),(1.75,1),(2.0,1),(1,1)]:
         show_object(result)
     l=sx
 '''
-'''
+
 # sculpt, width
 #a MIT planck:
 keybrd = [
@@ -759,7 +805,7 @@ for x in range(len(keybrd)):
 '''
 exporters.export(
     result,
-    'SA_keyset.stl',
+    keyname+'parkey.stl',
     tolerance=0.15,
     angularTolerance=0.125
     )
