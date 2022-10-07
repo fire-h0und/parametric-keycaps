@@ -384,7 +384,9 @@ def alps_hole (ride,dims):
         hole=hole.cut(alps_stab.translate([0,-spacing/2,0]))
 
     #TODO add the 35mm offset 4mm dia stabilizer axle too
-    #TODO add the 35mm 2nd alps stem to 7U space bar
+    # add the 35mm to the right 2nd alps stem to every 7U space bar
+    if width == 7: # space keys:
+        hole = hole.cut(alps_stem.translate([0,35,0]))
 
     return hole.rotate((0,0,0),(0,0,1),rotation)
 
@@ -411,7 +413,10 @@ def alpsmx_hole (ride,dims):
 
     #add stabilizers:
     spacing = 0
-    if width > 2.75: # space keys:
+    
+    if width > 7: # huuge space keys (we''l use 7U stab onward)
+        spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
+    elif width > 2.75: # space keys:
         spacing = ( width - 1 ) * 3/4 * 25.38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -453,8 +458,8 @@ def chocv1_hole (ride,dims):
     #add stabilizers:
     spacing = 0
     if width >= 6.25: # space keys:
-        spacing = 50 #mm
-    if width > 2.75: # space keys:
+        spacing = 50*2 #mm
+    elif width > 2.75: # space keys:
         spacing = 38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -487,7 +492,9 @@ def mx_hole (ride,dims):
 
     #add stabilizers:
     spacing = 0
-    if width > 2.75: # space keys:
+    if width > 7: # huuge space keys (we''l use 7U stab onward)
+        spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
+    elif width > 2.75: # space keys:
         spacing = ( width - 1 ) * 3/4 * 25.38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -593,7 +600,7 @@ def spherical_cap (stem,row,dims):
 
         #two opposing sides at switch width distance
         sides_L = side1
-        sides_L = sides_L.intersect(base.translate([step/2,0,step*1.35])) # half side profile
+        sides_L = sides_L.intersect(base.translate([step/2,0,step*1.35-2])) # half side profile
         sides_L = sides_L.translate([ ((width-1)*step/2) , 0 , 0 ])
         sides_R = sides_L.rotate((0,0,0),(0,0,1),180)
         #sides length wise:
@@ -613,8 +620,8 @@ def spherical_cap (stem,row,dims):
         # fillet sides
         #
         e_selection='not( #Z )'
-        d = form.edges(e_selection)
-        d = d.fillet(r2)
+        d = form#.edges(e_selection)
+        #d = d.fillet(r2)
         form = form.edges(e_selection) # we are pencil (or rocket) shaped
         form = form.fillet(r2)
 
@@ -644,7 +651,7 @@ def spherical_cap (stem,row,dims):
         #d = form.edges(e_select_top)
         form = form.faces(f_select_top).edges(e_select_top)
 
-        form = form.fillet(r3)
+        #form = form.fillet(r3)
         #width
         if width > 0:
             form = form.cut(base)
@@ -693,8 +700,9 @@ init('medium') # default (none) style
 
 
 #selection='( <Z or |X or |Y )'
+
 init('semilow')
-result = spherical_cap ("Alps",1,(2.25,1)).translate((0,0,0))
+result = spherical_cap ("MX",1,(10,1)).translate((0,0,0))
 show_object(result)
 keyname='semilow_Alps_R1_W2.25'
 exporters.export(
@@ -705,7 +713,7 @@ exporters.export(
     )
 
 init('medium')
-result = spherical_cap ("Alps",1,(2.25,1)).translate((0,step,0))
+result = spherical_cap ("AlpsMX",1,(6.25,1)).translate((0,step,0))
 show_object(result)
 keyname='medium_Alps_R1_W2.25'
 exporters.export(
@@ -716,7 +724,7 @@ exporters.export(
     )
 
 init('semihigh')
-result = spherical_cap ("Alps",1,(2.25,1)).translate((0,step*2,0))
+result = spherical_cap ("Alps",1,(7,1)).translate((0,step*2,0))
 show_object(result)
 keyname='semihigh_Alps_R1_W2.25'
 exporters.export(
@@ -727,7 +735,7 @@ exporters.export(
     )
 
 init('high')
-result = spherical_cap ("Alps",1,(2.25,1)).translate((0,step*3,0))
+result = spherical_cap ("Choc",1,(6.25,1)).translate((0,step*3,0))
 show_object(result)
 keyname='high_Alps_R1_W2.25'
 exporters.export(
