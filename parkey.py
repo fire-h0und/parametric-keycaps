@@ -1,6 +1,25 @@
 
 import cadquery as cq
 from cadquery import exporters
+from math import sqrt
+
+def tri_h (k,h):
+    '''Right Triangle's height: k= kathete, h=hypotenuse
+    '''
+    a = sqrt( h**2 - (k/2)**2 ) # answer (other kathete)
+    return a
+
+#the radius and the origin points can form a shape:
+#        ^
+#       /|\ r
+#      / |h\
+#     -------
+# -pos   0   pos
+#
+
+#radius intersection point:
+#h = tri_h (pos*2,r)
+
 
 step=19.05 # mm
 gap = 0.95
@@ -70,9 +89,8 @@ sw_body= 14   #mm how much the switch requires
 # our generic body values
 r1=0.25 #mm base corners
 r2=2    #mm top edge corners
-r3=0.5  #mm top edge
+r3=0.51  #mm top edge
 
-r4   = 0.95 #mm stem hole edge chamfers
 ribsW= 1 #mm wide
 
 #Alps stabilizer size and position (looking from top down)
@@ -106,22 +124,23 @@ row=1
 
 def init(style:str):
     #"low","semilow","medium","semihigh","high"
-    global o,height,wall,roundness,radius,radius2,radius3,ride,sw_body,ribsZ,ride,cave,radius_offset
+    global o,height,wall,roundness,radius,radius2,radius3,ride,r3,r4,sw_body,ribsZ,ride,cave,radius_offset
 
     if style in ["low","semilow","medium","semihigh","high"]:
         print(style)
         if style == "low":
-            height   = 5.9 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
+            height   = 5.5 #mm
             wall     =  2   #mm how thick wall we want
-            roundness= 5.8 # measureless factor: from 0 to height gives sane values, a good default is 8.5
+            roundness= 3.0 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
             radius2  = 64     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 14 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.1 #mm special case when space radius needs tweaking
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   =  3.0 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            sw_body= 14   #mm how much the switch requires
+            ride   =  2.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            r4   = 0.5 #mm stem hole edge chamfers
+            sw_body= 15   #mm how much the switch requires
             ribsZ= 0.5 #mm high (stem ribs)
             ride = ride+ribsZ
             cave = size-2*wall # "cave" is the stem hole depth
@@ -131,20 +150,21 @@ def init(style:str):
             o=[6,6,2,0,2,-1]
 
         elif style == "semilow":
-            height   = 8.6 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
+            height   = 8.6 #mm
             wall     =  2   #mm how thick wall we want
-            roundness= 6.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
+            roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
             radius2  = 57     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.15 #mm special case when space radius needs tweaking
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            sw_body= 14   #mm how much the switch requires
-            ribsZ= 1.0 #mm high (stem ribs)
-            ride = ride+ribsZ
-            cave = size-2*wall # "cave" is the stem hole depth
+            ride   = 3.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            r4     = 0.5 #mm stem hole edge chamfers
+            sw_body= 15   #mm how much the switch requires
+            ribsZ  = 0.5 #mm high (stem ribs) BEWARE affects hole height!
+            ride   = ride+ribsZ
+            cave   = size-2*wall # "cave" is the stem hole depth
 
             if cave < sw_body: # fitting the upper switch body
                 cave = sw_body
@@ -153,14 +173,16 @@ def init(style:str):
         elif style == "medium":
             height   = 10.5 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
-            roundness= 5.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
+            roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 47     #mm top radius (37 or 64 mm)
+            radius2  = 57     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 8 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.15 #mm special case when space radius needs tweaking
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            r3 = 0.69
+            r4 = 0.95
             sw_body= 14   #mm how much the switch requires
             ribsZ= 1.0 #mm high (stem ribs)
             ride = ride+ribsZ
@@ -181,6 +203,7 @@ def init(style:str):
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            r4 = 0.95
             sw_body= 14   #mm how much the switch requires
             ribsZ= 1.5 #mm high (stem ribs)
             ride = ride+ribsZ
@@ -201,9 +224,10 @@ def init(style:str):
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            r4     = 1.5
             sw_body= 14   #mm how much the switch requires
-            ribsZ= 2 #mm high (stem ribs)
-            ride = ride+ribsZ
+            ribsZ= 2.5 #mm high (stem ribs)
+            #ride = ride+ribsZ
             cave = size-2*wall # "cave" is the stem hole depth
 
             if cave < sw_body: # fitting the upper switch body
@@ -233,6 +257,26 @@ def init(style:str):
         # -1 is special case of space row profile
         o=[7,7,4,0,4,-1]
     return
+
+def hole_gen (dims,ride):
+    width,length=dims
+
+    #shape the hole in negative
+    hole = cq.Workplane(origin=(0,0,(ride+ribsZ)/2-r4/2))
+    # shift it down for half the radius
+    # so the bottom part of it can be cut off
+    hole = hole.box(cave+(step*(length-1)),cave+(step*(width-1)),r4+ride+ribsZ)
+    hole = hole.fillet(r4)
+    return hole
+
+def rib_gen (dims):
+    width,length=dims
+    global ride
+    #shape the ribs in the hole ceiling
+    ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2))
+    ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
+    ribs = ribs.box(cave+(step*(length-1)),ribsW,ribsZ)
+    return ribs
 
 def alpsstem(dims):
     width,length=dims
@@ -287,13 +331,13 @@ def alpsstem(dims):
 def alpsstab(dims):
     width,length=dims
 
-    alps_stab=cq.Workplane(origin=(stab_offset,0,stab_retract+ribsZ/2+r4))
+    alps_stab=cq.Workplane(origin=(stab_offset,0,-1))#-stab_retract+ribsZ/2+r4))
     alps_stab=alps_stab.rect(stab_width+2*stab_wall,stab_length+2*stab_wall)
-    alps_stab=alps_stab.clean()
+    #alps_stab=alps_stab.clean()
     alps_stab=alps_stab.extrude(ride+ribsZ+r4)
     #alps_stab=alps_stab.union(ribs)
 
-    alps_stab_hole=cq.Workplane(origin=(stab_offset,0,-2))
+    alps_stab_hole=cq.Workplane(origin=(stab_offset,0,-1))
     alps_stab_hole=alps_stab_hole.rect(stab_width,stab_length)
     alps_stab_hole=alps_stab_hole.extrude(ride+ribsZ/2+r4+2)
     alps_stab=alps_stab.cut(alps_stab_hole)
@@ -309,9 +353,7 @@ def chocv1stem(dims):
     apartY    = stemY/2-stemfree/2
 
     #shape the ribs in the hole ceiling
-    ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2+r4))
-    ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
-    ribs = ribs.box(cave+(step*(length-1)),ribsW,ribsZ)
+    ribs = rib_gen(dims)
 
     stem=cq.Workplane(origin=(0,0,-1))
     stem=stem.pushPoints([(apartY,apartX),(-apartY,apartX),(-apartY,-apartX),(apartY,-apartX)])
@@ -334,7 +376,7 @@ def mxstem(dims):
     mx_stem=cq.Workplane(origin=(0,0,-1))
     mx_stem=mx_stem.circle(2.75) # this is fixed value
     mx_stem=mx_stem.clean()
-    mx_stem=mx_stem.extrude(ride+3.1) # this is fixed length
+    mx_stem=mx_stem.extrude(ride+ribsZ+3.1) # this is fixed length
     #my stem size fixes for FDM (a smidge too tight)
     mx_stem_hole=cq.Workplane(origin=(0,0,-2))
     mx_stem_hole=mx_stem_hole.rect(4.15-0.05, 1.27+0.05)
@@ -353,9 +395,7 @@ def alps_hole (ride,dims):
         length = 1
 
     #shape the ribs in the hole ceiling
-    ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2+r4))
-    ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
-    ribs = ribs.box(cave+(step*(length-1)),ribsW,ribsZ)
+    ribs = rib_gen(dims)
 
     #shape the stem in positive form
     alps_stem=alpsstem(dims)
@@ -364,10 +404,7 @@ def alps_hole (ride,dims):
     alps_stab=alpsstab(dims)
     #TODO
 
-    #shape the hole in negative
-    hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
-    hole = hole.box(cave+(step*(length-1)),cave+(step*(width-1)),ride+r4+2)
-    hole = hole.fillet(r4)
+    hole = hole_gen(dims,ride)
     hole = hole.cut(ribs)
     hole = hole.cut(alps_stem)
 
@@ -384,9 +421,7 @@ def alps_hole (ride,dims):
         hole=hole.cut(alps_stab.translate([0,-spacing/2,0]))
 
     #TODO add the 35mm offset 4mm dia stabilizer axle too
-    # add the 35mm to the right 2nd alps stem to every 7U space bar
-    if width == 7: # space keys:
-        hole = hole.cut(alps_stem.translate([0,35,0]))
+    #TODO add the 35mm 2nd alps stem to 7U space bar
 
     return hole.rotate((0,0,0),(0,0,1),rotation)
 
@@ -394,9 +429,7 @@ def alpsmx_hole (ride,dims):
     width,length=dims
 
     #shape the ribs in the hole ceiling
-    ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2+r4))
-    ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
-    ribs = ribs.box(cave+(step*(length-1)),ribsW,ribsZ)
+    ribs = rib_gen(dims)
 
     #shape the stem in positive form
     alps_stem=alpsstem(dims)
@@ -404,19 +437,13 @@ def alpsmx_hole (ride,dims):
     #MX stab stems:
     mx_stem=mxstem(dims)
 
-    #shape the hole in negative
-    hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
-    hole = hole.box(cave+(step*(length-1)),cave+(step*(width-1)),ride+r4+2)
-    hole = hole.fillet(r4)
+    hole = hole_gen(dims,ride)
     hole = hole.cut(ribs)
     hole = hole.cut(alps_stem)
 
     #add stabilizers:
     spacing = 0
-    
-    if width > 7: # huuge space keys (we''l use 7U stab onward)
-        spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
-    elif width > 2.75: # space keys:
+    if width > 2.75: # space keys:
         spacing = ( width - 1 ) * 3/4 * 25.38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -438,28 +465,23 @@ def chocv1_hole (ride,dims):
         width = length
         length = 1
 
-    #shape the ribs in the hole ceiling
-    ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2+r4))
-    ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
-    ribs = ribs.box(cave+(step*(length-1)),ribsW,ribsZ)
+    ribs = rib_gen(dims)
 
     #shape the stem in positive form
     stem=chocv1stem(dims)
     mx_stem=mxstem(dims)
     offset = 0.65 #mm Choc stem stabilizer offset
 
-    #shape the hole in negative
-    hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
-    hole = hole.box(cave+(step*(length-1)),cave+(step*(width-1)),ride+r4+2)
-    hole = hole.fillet(r4)
+    hole = hole_gen(dims,ride)
     hole = hole.cut(ribs)
     hole = hole.cut(stem)
+
 
     #add stabilizers:
     spacing = 0
     if width >= 6.25: # space keys:
-        spacing = 50*2 #mm
-    elif width > 2.75: # space keys:
+        spacing = 50 #mm
+    if width > 2.75: # space keys:
         spacing = 38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -476,25 +498,18 @@ def mx_hole (ride,dims):
     width,length=dims
 
     #shape the ribs in the hole ceiling
-    ribs = cq.Workplane(origin=(0,0,ride+ribsZ/2+r4))
-    ribs = ribs.box(ribsW,cave+(step*(width-1)),ribsZ)
-    ribs = ribs.box(cave+(step*(length-1)),ribsW,ribsZ)
+    ribs = rib_gen(dims)
 
     #shape the stem in positive form
     mx_stem=mxstem(dims)
 
-    #shape the hole in negative
-    hole = cq.Workplane(origin=(0,0,-r4+1+ride/2))
-    hole = hole.box(cave+(step*(length-1)),cave+(step*(width-1)),ride+r4+2)
-    hole = hole.fillet(r4)
+    hole = hole_gen(dims,ride)
     hole = hole.cut(ribs)
     hole = hole.cut(mx_stem)
 
     #add stabilizers:
     spacing = 0
-    if width > 7: # huuge space keys (we''l use 7U stab onward)
-        spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
-    elif width > 2.75: # space keys:
+    if width > 2.75: # space keys:
         spacing = ( width - 1 ) * 3/4 * 25.38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -600,7 +615,7 @@ def spherical_cap (stem,row,dims):
 
         #two opposing sides at switch width distance
         sides_L = side1
-        sides_L = sides_L.intersect(base.translate([step/2,0,step*1.35-2])) # half side profile
+        sides_L = sides_L.intersect(base.translate([step/2,0,step*1])) # half side profile
         sides_L = sides_L.translate([ ((width-1)*step/2) , 0 , 0 ])
         sides_R = sides_L.rotate((0,0,0),(0,0,1),180)
         #sides length wise:
@@ -620,19 +635,18 @@ def spherical_cap (stem,row,dims):
         # fillet sides
         #
         e_selection='not( #Z )'
-        d = form#.edges(e_selection)
-        #d = d.fillet(r2)
+        d = form.edges(e_selection)
         form = form.edges(e_selection) # we are pencil (or rocket) shaped
         form = form.fillet(r2)
 
         #o1 = -1 is space row
         if o1 != -1: # we are digging out a conqave shape:
             stamp_offset=[0,0,0]
-            shape = stamp.translate(stamp_offset)
             stamp = stamp.rotate((0,0,0),(0,0,1),-0.05)
+            shape = stamp.translate(stamp_offset)
             form = form.cut(stamp)
         else: # we are building a convex shape:
-            stamp_offset=[0,0,height*4]
+            stamp_offset=[0,0,height*3]
             stamp = stamp.rotate((0,0,0),(0,0,1),-0.05)
             shape = base.translate(stamp_offset).cut(stamp)
             form = form.cut(shape,clean=True)
@@ -640,32 +654,36 @@ def spherical_cap (stem,row,dims):
         # special case for row 4 (before we cut the switch hole)
         if row == 4:
             form = form.rotate((0,0,0),(0,0,1),180)
-            log("rotated :180")
+            #log("rotated :180")
         #
         # fillet top
         #
         f_select_top = '%SPHERE or ( %CYLINDER exc (<X or >X or <Y or >Y) )'
         e_select_top = 'not( %CIRCLE )'
-        d = form#.faces(f_select_top).edges(e_select_top)
-        #d = d.fillet(r3)
+        d    = form.faces(f_select_top).edges(e_select_top)
         #d = form.edges(e_select_top)
         form = form.faces(f_select_top).edges(e_select_top)
+        form = form.fillet(r3)
 
-        #form = form.fillet(r3)
-        #width
-        if width > 0:
-            form = form.cut(base)
+        form = form.cut(base.translate([0,0,-2.5]))
+        rotation=0
+        if width == 1 and length!=1:
+            tw,tl=length,width
+            width,length=tw,tl
+            rotation=90
+        else:
+            pass
         if stem in ["","MX","mx"]:
-            form = form.cut(mx_hole(ride,(width,length)))
+            form = form.cut(mx_hole(ride,(width,length)).rotate((0,0,0),(0,0,1),rotation))
         elif stem in ["Alps","ALPS","alps"]:
-            form = form.cut(alps_hole(ride,(width,length)))
+            form = form.cut(alps_hole(ride,(width,length)).rotate((0,0,0),(0,0,1),rotation))
         elif stem in ["AlpsMX","ALPSMX","alpsmx"]:
-            form = form.cut(alpsmx_hole(ride,(width,length)))
+            form = form.cut(alpsmx_hole(ride,(width,length)).rotate((0,0,0),(0,0,1),rotation))
         elif stem in ["ChocV1","V1","chocv1","Choc","choc"]:
-            form = form.cut(chocv1_hole(ride,(width,length)))
-        #form = form.rotate((0,0,0),(0,0,1),90)
+            form = form.cut(chocv1_hole(ride,(width,length)).rotate((0,0,0),(0,0,1),rotation))
+            #form = form.rotate((0,0,0),(0,0,1),90)
 
-    #    return sides.rotate((0,0,0),(0,0,1),90).intersect(sides_LW)
+        #    return sides.rotate((0,0,0),(0,0,1),90).intersect(sides_LW)
     else:
         form = cq.Workplane()
     return form
@@ -700,56 +718,15 @@ init('medium') # default (none) style
 
 
 #selection='( <Z or |X or |Y )'
+f_select_top = '%SPHERE or ( %CYLINDER exc (<X or >X or <Y or >Y) )'
+e_select_top = 'not( %CIRCLE ) '
 
-init('semilow')
-result = spherical_cap ("MX",1,(10,1)).translate((0,0,0))
-show_object(result)
-keyname='semilow_Alps_R1_W2.25'
-exporters.export(
-    result,
-    keyname+'_parkey.stl',
-    tolerance=0.15,
-    angularTolerance=0.125
-    )
-
-init('medium')
-result = spherical_cap ("AlpsMX",1,(6.25,1)).translate((0,step,0))
-show_object(result)
-keyname='medium_Alps_R1_W2.25'
-exporters.export(
-    result,
-    keyname+'_parkey.stl',
-    tolerance=0.15,
-    angularTolerance=0.125
-    )
-
-init('semihigh')
-result = spherical_cap ("Alps",1,(7,1)).translate((0,step*2,0))
-show_object(result)
-keyname='semihigh_Alps_R1_W2.25'
-exporters.export(
-    result,
-    keyname+'_parkey.stl',
-    tolerance=0.15,
-    angularTolerance=0.125
-    )
-
-init('high')
-result = spherical_cap ("Choc",1,(6.25,1)).translate((0,step*3,0))
-show_object(result)
-keyname='high_Alps_R1_W2.25'
-exporters.export(
-    result,
-    keyname+'_parkey.stl',
-    tolerance=0.15,
-    angularTolerance=0.125
-    )
-
-
-#result = mx_hole (5,1.25)
+result = spherical_cap ("alpsmx",5,(1,2))
 #highlight = result.edges(selection)
+#highlight = result.faces(f_select_top).edges(e_select_top)
 
-#show_object(result, name="body", options={cq.Color("blue")})
+
+show_object(result, name="body", options={cq.Color("blue")})
 #debug(highlight)
 
 '''
@@ -768,6 +745,9 @@ for s in [(1,2),(1.25,1),(1.5,1.5),(1.75,1),(2.0,1),(1,1)]:
         r = k+1 #row
         result = spherical_cap ("choc",r,s).translate ([y*step,(x-(sy/2))*step,0])
         show_object(result)
+        highlight = result.faces(f_select_top).edges(e_select_top)
+        debug(highlight)
+
     l=sx
 '''
 
@@ -813,7 +793,7 @@ for x in range(len(keybrd)):
 '''
 exporters.export(
     result,
-    keyname+'parkey.stl',
+    'SA_keyset.stl',
     tolerance=0.15,
     angularTolerance=0.125
     )
