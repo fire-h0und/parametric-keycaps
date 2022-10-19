@@ -124,25 +124,26 @@ row=1
 
 def init(style:str):
     #"low","semilow","medium","semihigh","high"
-    global o,height,wall,roundness,radius,radius2,radius3,ride,r3,r4,sw_body,ribsZ,ride,cave,radius_offset
+    global o,height,wall,roundness,radius,radius2,radius3,ride,r2,r3,r4,sw_body,ribsZ,ride,cave,radius_offset,shape_compensation
 
-    if style in ["low","semilow","medium","semihigh","high"]:
+    if style in ["low","semilow","semihigh","high","max"]:
         print(style)
         if style == "low":
-            height   = 5.5 #mm
-            wall     =  2   #mm how thick wall we want
+            height   = 3.5 #mm
+            wall     =  1.5   #mm how thick wall we want
             roundness= 3.0 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 64     #mm top radius (37 or 64 mm)
+            radius2  = 67     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 14 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.1 #mm special case when space radius needs tweaking
+            shape_compensation = 1.0
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  2.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            r4   = 0.5 #mm stem hole edge chamfers
+            r4   = 0.95 #mm stem hole edge chamfers
             sw_body= 15   #mm how much the switch requires
-            ribsZ= 0.5 #mm high (stem ribs)
-            ride = ride+ribsZ
+            ribsZ= 0.25 #mm high (stem ribs)
+            #ride = ride+ribsZ
             cave = size-2*wall # "cave" is the stem hole depth
 
             if cave < sw_body: # fitting the upper switch body
@@ -150,27 +151,28 @@ def init(style:str):
             o=[6,6,2,0,2,-1]
 
         elif style == "semilow":
-            height   = 8.6 #mm
+            height   = 7.6 #mm
             wall     =  2   #mm how thick wall we want
             roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
             radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
             radius2  = 57     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.15 #mm special case when space radius needs tweaking
+            shape_compensation = .5
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   = 3.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            ride   = 4.0 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
             r4     = 0.5 #mm stem hole edge chamfers
             sw_body= 15   #mm how much the switch requires
             ribsZ  = 0.5 #mm high (stem ribs) BEWARE affects hole height!
-            ride   = ride+ribsZ
+            #ride   = ride+ribsZ
             cave   = size-2*wall # "cave" is the stem hole depth
 
             if cave < sw_body: # fitting the upper switch body
                 cave = sw_body
             o=[7,7,3,0,3,-1]
 
-        elif style == "medium":
+        elif style == "semihigh":
             height   = 10.5 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
             roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
@@ -178,6 +180,7 @@ def init(style:str):
             radius2  = 57     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 8 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.15 #mm special case when space radius needs tweaking
+            shape_compensation = 0.25
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
@@ -185,14 +188,14 @@ def init(style:str):
             r4 = 0.95
             sw_body= 14   #mm how much the switch requires
             ribsZ= 1.0 #mm high (stem ribs)
-            ride = ride+ribsZ
+            #ride = ride+ribsZ
             cave = size-2*wall # "cave" is the stem hole depth
 
             if cave < sw_body: # fitting the upper switch body
                 cave = sw_body
             o=[7,7,4,0,4,-1]
 
-        elif style == "semihigh":
+        elif style == "high":
             height   = 11.9 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
             roundness= 5.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
@@ -200,20 +203,21 @@ def init(style:str):
             radius2  = 37    #mm top radius (37 or 64 mm)
             radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.2 #mm special case when space radius needs tweaking
+            shape_compensation = 0.55
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
             r4 = 0.95
             sw_body= 14   #mm how much the switch requires
             ribsZ= 1.5 #mm high (stem ribs)
-            ride = ride+ribsZ
+            #ride = ride+ribsZ
             cave = size-2*wall # "cave" is the stem hole depth
 
             if cave < sw_body: # fitting the upper switch body
                 cave = sw_body
             o=[8,8,4,0,4,-1]
 
-        elif style == "high":
+        elif style == "max":
             height   = 13.7 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
             wall     =  2   #mm how thick wall we want
             roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
@@ -221,10 +225,12 @@ def init(style:str):
             radius2  = 32     #mm top radius (37 or 64 mm)
             radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.2 #mm special case when space radius needs tweaking
+            shape_compensation = 0.35
             #
             #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
             ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
             r4     = 1.5
+            r2     = 2.0 #mm
             sw_body= 14   #mm how much the switch requires
             ribsZ= 2.5 #mm high (stem ribs)
             #ride = ride+ribsZ
@@ -233,6 +239,7 @@ def init(style:str):
             if cave < sw_body: # fitting the upper switch body
                 cave = sw_body
             o=[8,8,4,0,4,-1]
+            o=[step/2,step/2,step/4,0,step/4,-1]
 
     else:
         #generic shape parameters:
@@ -243,11 +250,12 @@ def init(style:str):
         radius2  = 57     #mm top radius (37 or 64 mm)
         radius3  = radius2 - 8 #mm alternate top radius TODO (default is 8 or 11 mm)
         radius_offset = 1.15 #mm special case when space radius needs tweaking
+        shape_compensation = 0.5
         #
         #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
         ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
         sw_body= 14   #mm how much the switch requires
-        ribsZ= 1.0 #mm high (stem ribs)
+        ribsZ= 1.5 #mm high (stem ribs)
         ride = ride+ribsZ
         cave = size-2*wall # "cave" is the stem hole depth
 
@@ -372,6 +380,8 @@ def mxstem(dims):
     # Kailh BOX (square)
     # Kailh Silent BOX (round stem)
     # Cherry MX "+" like stem
+    mx_x_x, mx_x_y =4.15-0.05, 1.27+0.05
+    mx_y_x, mx_y_y =1.12+0.05, 4.15-0.05
 
     mx_stem=cq.Workplane(origin=(0,0,-1))
     mx_stem=mx_stem.circle(2.75) # this is fixed value
@@ -379,8 +389,8 @@ def mxstem(dims):
     mx_stem=mx_stem.extrude(ride+ribsZ+3.1) # this is fixed length
     #my stem size fixes for FDM (a smidge too tight)
     mx_stem_hole=cq.Workplane(origin=(0,0,-2))
-    mx_stem_hole=mx_stem_hole.rect(4.15-0.05, 1.27+0.05)
-    mx_stem_hole=mx_stem_hole.rect(1.12+0.05, 4.15-0.05)
+    mx_stem_hole=mx_stem_hole.rect(mx_x_x, mx_x_y)
+    mx_stem_hole=mx_stem_hole.rect(mx_y_x, mx_y_y)
     mx_stem_hole=mx_stem_hole.extrude(ride+2.95) # +2 mm to just be on the safe side here
     mx_stem=mx_stem.cut(mx_stem_hole)
     return mx_stem
@@ -421,7 +431,9 @@ def alps_hole (ride,dims):
         hole=hole.cut(alps_stab.translate([0,-spacing/2,0]))
 
     #TODO add the 35mm offset 4mm dia stabilizer axle too
-    #TODO add the 35mm 2nd alps stem to 7U space bar
+    # add the 35mm to the right 2nd alps stem to every 7U space bar
+    if width == 7: # space keys:
+        hole = hole.cut(alps_stem.translate([0,35,0]))
 
     return hole.rotate((0,0,0),(0,0,1),rotation)
 
@@ -443,7 +455,10 @@ def alpsmx_hole (ride,dims):
 
     #add stabilizers:
     spacing = 0
-    if width > 2.75: # space keys:
+    
+    if width > 7: # huuge space keys (we''l use 7U stab onward)
+        spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
+    elif width > 2.75: # space keys:
         spacing = ( width - 1 ) * 3/4 * 25.38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -480,8 +495,8 @@ def chocv1_hole (ride,dims):
     #add stabilizers:
     spacing = 0
     if width >= 6.25: # space keys:
-        spacing = 50 #mm
-    if width > 2.75: # space keys:
+        spacing = 50*2 #mm
+    elif width > 2.75: # space keys:
         spacing = 38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -509,7 +524,9 @@ def mx_hole (ride,dims):
 
     #add stabilizers:
     spacing = 0
-    if width > 2.75: # space keys:
+    if width > 7: # huuge space keys (we''l use 7U stab onward)
+        spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
+    elif width > 2.75: # space keys:
         spacing = ( width - 1 ) * 3/4 * 25.38 #mm
     #elif width > 2.75: # it's 3U:
     #    spacing=1.5 * 25.38 #mm   (it's 3/4" (== 1U) x  3U - (2 x 1/2U) exactly )
@@ -615,7 +632,7 @@ def spherical_cap (stem,row,dims):
 
         #two opposing sides at switch width distance
         sides_L = side1
-        sides_L = sides_L.intersect(base.translate([step/2,0,step*1])) # half side profile
+        sides_L = sides_L.intersect(base.translate([step/2,0,step-2])) # half side profile
         sides_L = sides_L.translate([ ((width-1)*step/2) , 0 , 0 ])
         sides_R = sides_L.rotate((0,0,0),(0,0,1),180)
         #sides length wise:
@@ -624,7 +641,7 @@ def spherical_cap (stem,row,dims):
         if width != 1.0: # for non unit size switchs
             sides_LW= sides_LW.box((width-1)*step,(length)*step*1.1,step*2) #we can't draw 0 width box
             #with (width-1) we are certainly clear the end of the side profiles
-        sides_LW= sides_LW.intersect(base.translate([0,0,step*1]),clean=True)
+        sides_LW= sides_LW.intersect(base.translate([0,0,step-2]),clean=True)
 
         #fuse opposing sides to form a square
         form  = sides_LW
@@ -635,7 +652,7 @@ def spherical_cap (stem,row,dims):
         # fillet sides
         #
         e_selection='not( #Z )'
-        d = form.edges(e_selection)
+        d = form#.edges(e_selection)
         form = form.edges(e_selection) # we are pencil (or rocket) shaped
         form = form.fillet(r2)
 
@@ -646,9 +663,9 @@ def spherical_cap (stem,row,dims):
             shape = stamp.translate(stamp_offset)
             form = form.cut(stamp)
         else: # we are building a convex shape:
-            stamp_offset=[0,0,height*3]
+            stamp_offset=[0,0,height*4]
             stamp = stamp.rotate((0,0,0),(0,0,1),-0.05)
-            shape = base.translate(stamp_offset).cut(stamp)
+            shape = base.translate(stamp_offset).cut(stamp.translate([0,0,shape_compensation]))
             form = form.cut(shape,clean=True)
 
         # special case for row 4 (before we cut the switch hole)
@@ -660,7 +677,7 @@ def spherical_cap (stem,row,dims):
         #
         f_select_top = '%SPHERE or ( %CYLINDER exc (<X or >X or <Y or >Y) )'
         e_select_top = 'not( %CIRCLE )'
-        d    = form.faces(f_select_top).edges(e_select_top)
+        #d    = form.faces(f_select_top).edges(e_select_top)
         #d = form.edges(e_select_top)
         form = form.faces(f_select_top).edges(e_select_top)
         form = form.fillet(r3)
@@ -691,7 +708,8 @@ def spherical_cap (stem,row,dims):
 #TODO:
 # pick sets of values across variables and make keyset presets
 
-init('medium') # default (none) style
+preset='semilow'
+init(preset) # default (none) style
 #
 #"low"
 #
@@ -714,21 +732,25 @@ init('medium') # default (none) style
 #"high"
 #
 #  an SA lookalike profile for tightly moving switches like Kailh BOX
-
-
+#
+#
+#"max"
+#
+# max height advised
+'''
 
 #selection='( <Z or |X or |Y )'
 f_select_top = '%SPHERE or ( %CYLINDER exc (<X or >X or <Y or >Y) )'
 e_select_top = 'not( %CIRCLE ) '
 
-result = spherical_cap ("alpsmx",5,(1,2))
+result = spherical_cap ("mx",4,(1.25,1))
 #highlight = result.edges(selection)
 #highlight = result.faces(f_select_top).edges(e_select_top)
 
 
 show_object(result, name="body", options={cq.Color("blue")})
 #debug(highlight)
-
+'''
 '''
 #show a lot:
 y=0
@@ -750,7 +772,7 @@ for s in [(1,2),(1.25,1),(1.5,1.5),(1.75,1),(2.0,1),(1,1)]:
 
     l=sx
 '''
-
+'''
 # sculpt, width
 #a MIT planck:
 keybrd = [
@@ -761,10 +783,9 @@ keybrd = [
 #    [[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1]],
     [[4,1],[4,1],[4,1],[4,1],[5,1],[5,2],[5,0],[5,1],[4,1],[4,1],[4,1],[4,1]],
     ]
-
-
 '''
-#ANSI 60%
+'''
+#ANSI PC AT%
 keybrd = [
   [[1,1],[1,1],[0,.75],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,2],[1,0],[0,.75],[1,1],[1,1.5],[1,1.5]],
   [[2,1],[2,1],[0,.75],[2,1.5],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1.5],[2,0],[0,.75],[2,1],[2,1],[2,1],[2,1]],
@@ -772,9 +793,39 @@ keybrd = [
   [[4,1],[4,1],[0,.75],[4,2.25],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,2.75],[4,0],[4,0],[4,0],[0,.75],[4,1],[4,1],[4,1],[4,1]],
   [[4,1],[4,1],[0,.75],[4,1.25],[4,1.25],[4,1.25],[5,6.25],[4,0],[4,0],[4,0],[4,0],[4,0],[4,0],[4,0],[4,1.25],[4,1.25],[4,1.25],[4,1.25],[5,.75],[4,2],[4,1],[4,1]],
   ]
+'''
+'''
+#ANSI 60%
+keybrd = [
+  [[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,2],[1,0]],
+  [[2,1.5],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1],[2,1.5],[2,0]],
+  [[3,1.75],[3,1],[3,1],[3,1],[3,1],[3,1],[3,1],[3,1],[3,1],[3,1],[3,1],[3,1],[3,2.25],[3,0],[3,0]],
+  [[4,2.25],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,2.75],[4,0],[4,0],[4,0]],
+  [[4,1.25],[4,1.25],[4,1.25],[5,6.25],[4,1.25],[4,1.25],[4,1.25],[4,1.25]],
+  ]
 
 '''
 '''
+#ANSI unique keys
+keybrd = [
+  [[1,1],[1,2]], #esc row with 2U backspace key
+  [[2,1.5],[2,1]], # ANSI tab row 2x 1.5U
+  [[3,1.75],[3,1],[3,2.25]], # ANSI enter row non stepped CAPS
+  [[4,2.25],[4,1],[4,2.75]], # ANSI shift row
+  [[4,1.25],[5,6.25]], #6.25U space row (7x 1.25U)
+  [[4,1.75]], # ISO with short shift
+  [[5,7]], #7U space row
+  ]
+'''
+#Ortho unique keys
+keybrd = [
+  [[1,1]],
+  [[2,1]], # TODO accented [2,1]
+  [[3,1]],
+  [[4,1],[5,1],[5,2]], # mods and 2U space
+  ]
+
+
 a=0
 b=0
 for x in range(len(keybrd)):
@@ -782,14 +833,22 @@ for x in range(len(keybrd)):
     log(b)
     b=0
     for y in range(len(keybrd[x])):
-        t="Choc"
+        t="MX"
         s=keybrd[x][y][0]
         w=keybrd[x][y][1]
         b=b+w/2
         result = spherical_cap(t,s,(w,1)).translate([-b*19.05,a*19.05,0])
         b=b+w/2
-        show_object(result,options={cq.Color("blue")})
-'''
+        show_object(result)
+        keyname=preset+'_'+t+'_R'+str(s)+'_W'+str(w)+'_parkey.stl'
+        log (keyname)
+        exporters.export(
+            result,
+            keyname,
+            tolerance=0.025,
+            angularTolerance=0.1
+            )
+
 '''
 exporters.export(
     result,
