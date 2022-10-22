@@ -84,14 +84,14 @@ size=step - gap
 
 #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
 ride   =  3.0 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-sw_body= 14   #mm how much the switch requires
+sw_body= 14   #mm how much space the switch requires
 
 # our generic body values
-r1=0.25 #mm base corners
-r2=2    #mm top edge corners
+r1=0.25  #mm base corners
+r2=2     #mm top edge corners
 r3=0.51  #mm top edge
 
-ribsW= 1 #mm wide
+ribsW= 1 #mm width of the stem ribs
 
 #Alps stabilizer size and position (looking from top down)
 # the measured value is (2.975) 3.325 x 2.055 mm on the brown (nylon?)
@@ -119,6 +119,8 @@ stem_rib_w1= 0.5 #mm the double rib on the longer side
 stem_rib_w2= 0.8 #mm the single rib on the narrow side
 stem_rib_sp= 2.5 #mm how wide to putr the ribs apart
 
+shape_compensation = 1.0 # how the convex height compares to the concave
+
 row=1
 
 
@@ -128,7 +130,7 @@ def init(style:str):
 
     if style in ["low","semilow","semihigh","high","max"]:
         print(style)
-        if style == "low":
+        if style == "low": # this is most suited for Choc V2 switch
             height   = 3.5 #mm
             wall     =  1.5   #mm how thick wall we want
             roundness= 3.0 # measureless factor: from 0 to height gives sane values, a good default is 8.5
@@ -137,133 +139,100 @@ def init(style:str):
             radius3  = radius2 - 14 #mm alternate top radius TODO (default is 8 or 11 mm)
             radius_offset = 1.1 #mm special case when space radius needs tweaking
             shape_compensation = 1.0
-            #
-            #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   =  2.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            r4   = 0.95 #mm stem hole edge chamfers
-            sw_body= 15   #mm how much the switch requires
-            ribsZ= 0.25 #mm high (stem ribs)
-            #ride = ride+ribsZ
-            cave = size-2*wall # "cave" is the stem hole depth
 
-            if cave < sw_body: # fitting the upper switch body
-                cave = sw_body
+            ride   =  2.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
+            r4     = 0.95 #mm stem hole edge chamfers
+            sw_body= 15.5   #mm how much the switch requires
+            ribsZ= 0.25 #mm high (stem ribs)
             o=[6,6,2,0,2,-1]
 
-        elif style == "semilow":
-            height   = 7.6 #mm
-            wall     =  2   #mm how thick wall we want
-            roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
-            radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 57     #mm top radius (37 or 64 mm)
-            radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
-            radius_offset = 1.15 #mm special case when space radius needs tweaking
+        elif style == "semilow": # this is a low ride cap suited for fast or low switches
+            height   = 7.6
+            wall     =  2
+            roundness= 4.5
+            radius   = size + (height-roundness)*4
+            radius2  = 57
+            radius3  = radius2 - 11
+            radius_offset = 1.15
             shape_compensation = .5
-            #
-            #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   = 4.0 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            r4     = 0.5 #mm stem hole edge chamfers
-            sw_body= 15   #mm how much the switch requires
-            ribsZ  = 0.5 #mm high (stem ribs) BEWARE affects hole height!
-            #ride   = ride+ribsZ
-            cave   = size-2*wall # "cave" is the stem hole depth
 
-            if cave < sw_body: # fitting the upper switch body
-                cave = sw_body
+            ride   = 4.0
+            r4     = 0.5
+            sw_body= 15.5
+            ribsZ  = 0.5
             o=[7,7,3,0,3,-1]
 
-        elif style == "semihigh":
-            height   = 10.5 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
-            wall     =  2   #mm how thick wall we want
-            roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
-            radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 57     #mm top radius (37 or 64 mm)
-            radius3  = radius2 - 8 #mm alternate top radius TODO (default is 8 or 11 mm)
-            radius_offset = 1.15 #mm special case when space radius needs tweaking
+        elif style == "semihigh": # this is classical middle ride full size switch preset
+            height   = 10.5
+            wall     =  2
+            roundness= 4.5
+            radius   = size + (height-roundness)*4
+            radius2  = 57
+            radius3  = radius2 - 8
+            radius_offset = 1.15
             shape_compensation = 0.25
-            #
-            #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            r3 = 0.69
-            r4 = 0.95
-            sw_body= 14   #mm how much the switch requires
-            ribsZ= 1.0 #mm high (stem ribs)
-            #ride = ride+ribsZ
-            cave = size-2*wall # "cave" is the stem hole depth
 
-            if cave < sw_body: # fitting the upper switch body
-                cave = sw_body
+            ride   =  5.5
+            r3     = 0.69
+            r4     = 0.95
+            sw_body= 14
+            ribsZ  = 1.0
             o=[7,7,4,0,4,-1]
 
-        elif style == "high":
-            height   = 11.9 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
-            wall     =  2   #mm how thick wall we want
-            roundness= 5.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
-            radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 37    #mm top radius (37 or 64 mm)
-            radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
-            radius_offset = 1.2 #mm special case when space radius needs tweaking
+        elif style == "high": # this is similar to the vintage SA DSA profile
+            height   = 11.9
+            wall     =  2
+            roundness= 5.5
+            radius   = size + (height-roundness)*4
+            radius2  = 37
+            radius3  = radius2 - 11
+            radius_offset = 1.2
             shape_compensation = 0.55
-            #
-            #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            r4 = 0.95
-            sw_body= 14   #mm how much the switch requires
-            ribsZ= 1.5 #mm high (stem ribs)
-            #ride = ride+ribsZ
-            cave = size-2*wall # "cave" is the stem hole depth
 
-            if cave < sw_body: # fitting the upper switch body
-                cave = sw_body
-            o=[8,8,4,0,4,-1]
+            ride   =  5.5
+            r4     = 0.95
+            sw_body= 14
+            ribsZ  = 1.5
+            o=[8,8,5,0,5,-1]
 
-        elif style == "max":
-            height   = 13.7 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
-            wall     =  2   #mm how thick wall we want
-            roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
-            radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-            radius2  = 32     #mm top radius (37 or 64 mm)
-            radius3  = radius2 - 11 #mm alternate top radius TODO (default is 8 or 11 mm)
-            radius_offset = 1.2 #mm special case when space radius needs tweaking
+        elif style == "max": # this is for living on high heels
+            height   = 13.7
+            wall     =  2
+            roundness= 4.5
+            radius   = size + (height-roundness)*4
+            radius2  = 32
+            radius3  = radius2 - 11
+            radius_offset = 1.2
             shape_compensation = 0.35
-            #
-            #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-            ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-            r4     = 1.5
-            r2     = 2.0 #mm
-            sw_body= 14   #mm how much the switch requires
-            ribsZ= 2.5 #mm high (stem ribs)
-            #ride = ride+ribsZ
-            cave = size-2*wall # "cave" is the stem hole depth
 
-            if cave < sw_body: # fitting the upper switch body
-                cave = sw_body
-            o=[8,8,4,0,4,-1]
+            ride   =  5.5
+            r4     = 1.5
+            r2     = 2.0
+            sw_body= 14
+            ribsZ= 2.5
+            o=[8,8,5,0,5,-1]
             o=[step/2,step/2,step/4,0,step/4,-1]
 
     else:
         #generic shape parameters:
-        height   = 8.6 #mm values that work: (5.9 (for 64 mm radius!) ) 8.6, 10.5, 11.9, 13.7
-        wall     =  2   #mm how thick wall we want
-        roundness= 4.5 # measureless factor: from 0 to height gives sane values, a good default is 8.5
-        radius   = size + (height-roundness)*4   #mm sides radius tuned to height 8.5-0
-        radius2  = 57     #mm top radius (37 or 64 mm)
-        radius3  = radius2 - 8 #mm alternate top radius TODO (default is 8 or 11 mm)
-        radius_offset = 1.15 #mm special case when space radius needs tweaking
+        height   = 8.6 # this is classical middle ride full size switch preset
+        wall     =  2
+        roundness= 4.5
+        radius   = size + (height-roundness)*4
+        radius2  = 57
+        radius3  = radius2 - 8
+        radius_offset = 1.15
         shape_compensation = 0.5
-        #
-        #ride: for MX the ride can go as low as 2.5mm before the cap hits the plate
-        ride   =  5.5 #mm how deep the switch goes (5.5 for Alps, 3.0 mm for Choc V2)
-        sw_body= 14   #mm how much the switch requires
-        ribsZ= 1.5 #mm high (stem ribs)
-        ride = ride+ribsZ
-        cave = size-2*wall # "cave" is the stem hole depth
 
-        if cave < sw_body: # fitting the upper switch body
-            cave = sw_body
-        # calculated values for row stamping offsets:
-        # -1 is special case of space row profile
+        ride   =  5.5
+        r4     = 0.95
+        sw_body= 14
+        ribsZ  = 1.5
         o=[7,7,4,0,4,-1]
+
+    cave = size-2*wall # "cave" is the stem hole depth
+    if cave < sw_body: # fitting the upper switch body
+        cave = sw_body
     return
 
 def hole_gen (dims,ride):
@@ -455,7 +424,7 @@ def alpsmx_hole (ride,dims):
 
     #add stabilizers:
     spacing = 0
-    
+
     if width > 7: # huuge space keys (we''l use 7U stab onward)
         spacing = ( 7 - 1 ) * 3/4 * 25.38 #mm
     elif width > 2.75: # space keys:
@@ -663,7 +632,7 @@ def spherical_cap (stem,row,dims):
             shape = stamp.translate(stamp_offset)
             form = form.cut(stamp)
         else: # we are building a convex shape:
-            stamp_offset=[0,0,height*4]
+            stamp_offset=[0,0,height*5]
             stamp = stamp.rotate((0,0,0),(0,0,1),-0.05)
             shape = base.translate(stamp_offset).cut(stamp.translate([0,0,shape_compensation]))
             form = form.cut(shape,clean=True)
@@ -680,7 +649,7 @@ def spherical_cap (stem,row,dims):
         #d    = form.faces(f_select_top).edges(e_select_top)
         #d = form.edges(e_select_top)
         form = form.faces(f_select_top).edges(e_select_top)
-        form = form.fillet(r3)
+        form = form.fillet(r3) # iff this fails try rise stamp_offset Z multiplier to 5 or more
 
         form = form.cut(base.translate([0,0,-2.5]))
         rotation=0
@@ -708,7 +677,7 @@ def spherical_cap (stem,row,dims):
 #TODO:
 # pick sets of values across variables and make keyset presets
 
-preset='semilow'
+preset='high'
 init(preset) # default (none) style
 #
 #"low"
@@ -784,7 +753,7 @@ keybrd = [
     [[4,1],[4,1],[4,1],[4,1],[5,1],[5,2],[5,0],[5,1],[4,1],[4,1],[4,1],[4,1]],
     ]
 '''
-'''
+
 #ANSI PC AT%
 keybrd = [
   [[1,1],[1,1],[0,.75],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,1],[1,2],[1,0],[0,.75],[1,1],[1,1.5],[1,1.5]],
@@ -793,7 +762,7 @@ keybrd = [
   [[4,1],[4,1],[0,.75],[4,2.25],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,2.75],[4,0],[4,0],[4,0],[0,.75],[4,1],[4,1],[4,1],[4,1]],
   [[4,1],[4,1],[0,.75],[4,1.25],[4,1.25],[4,1.25],[5,6.25],[4,0],[4,0],[4,0],[4,0],[4,0],[4,0],[4,0],[4,1.25],[4,1.25],[4,1.25],[4,1.25],[5,.75],[4,2],[4,1],[4,1]],
   ]
-'''
+
 '''
 #ANSI 60%
 keybrd = [
@@ -816,7 +785,7 @@ keybrd = [
   [[4,1.75]], # ISO with short shift
   [[5,7]], #7U space row
   ]
-'''
+
 #Ortho unique keys
 keybrd = [
   [[1,1]],
@@ -824,9 +793,9 @@ keybrd = [
   [[3,1]],
   [[4,1],[5,1],[5,2]], # mods and 2U space
   ]
+'''
 
-
-a=0
+a=-1
 b=0
 for x in range(len(keybrd)):
     a=a+1
@@ -842,12 +811,12 @@ for x in range(len(keybrd)):
         show_object(result)
         keyname=preset+'_'+t+'_R'+str(s)+'_W'+str(w)+'_parkey.stl'
         log (keyname)
-        exporters.export(
-            result,
-            keyname,
-            tolerance=0.025,
-            angularTolerance=0.1
-            )
+        #exporters.export(
+        #    result,
+        #    keyname,
+        #    tolerance=0.025,
+        #    angularTolerance=0.1
+        #    )
 
 '''
 exporters.export(
