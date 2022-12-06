@@ -1,5 +1,5 @@
 from .parameters import *
-import cadquery as cq 
+import cadquery as cq
 
 def tri_h (k,h):
     '''Right Triangle's height: k= kathete, h=hypotenuse
@@ -17,8 +17,6 @@ def tri_h (k,h):
 
 #radius intersection point:
 #h = tri_h (pos*2,r)
-
-row=1
 
 def init(style:str):
     #"low","semilow","medium","semihigh","high"
