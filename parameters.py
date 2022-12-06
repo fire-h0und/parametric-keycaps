@@ -97,3 +97,5 @@ stem_rib_w2= 0.8 #mm the single rib on the narrow side
 stem_rib_sp= 2.5 #mm how wide to putr the ribs apart
 
 shape_compensation = 1.0 # how the convex height compares to the concave
+
+row=1
